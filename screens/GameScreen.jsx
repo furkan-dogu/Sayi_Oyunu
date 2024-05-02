@@ -1,9 +1,38 @@
-import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { useState } from 'react'
+import Title from '../components/Title'
+import ComputerNumber from "../components/ComputerNumber"
 
-const GameScreen = () => {
+export default function GameScreen({ userNumber }) {
+
+  const initialGuess = generateNumber(1, 100, userNumber)
+  
+  const [currentGuess, setCurrentGuess] = useState(initialGuess)
+
+  function generateNumber(min, max, exclude) {
+    let randomNumber = Math.floor(Math.random() * (max - min)) + min
+
+    if(randomNumber === exclude) {
+      return generateNumber(min, max, exclude)
+    } else {
+      return randomNumber
+    }
+  }
+
   return (
-    <div>GameScreen</div>
+    <View style={styles.container}>
+      <Title title="Bilgisayar Tahmini" />
+      <ComputerNumber>{currentGuess}</ComputerNumber>
+      <View>
+        <Text>Altında mı üstünde mi?</Text>
+      </View>
+    </View>
   )
 }
 
-export default GameScreen
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 30
+  }
+})

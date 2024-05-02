@@ -1,68 +1,87 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
-import CustomButton from '../components/CustomButton'
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import CustomButton from "../components/CustomButton";
+import Title from '../components/Title'
 
-export default function GameStartScreen() {
+export default function GameStartScreen({ onSendNumber }) {
+  const [enteredNumber, setEnteredNumber] = useState("");
 
-    const handleReset = () => {
-      
+  const handleReset = () => {
+    setEnteredNumber("");
+  };
+
+  const handleConfirm = () => {
+    const chosenNumber = parseInt(enteredNumber);
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+      Alert.alert("Geçersiz Sayı!", "Sayı 1 ile 99 arasında olmalıdır", [
+        { text: "Tamam", style: "destructive", onPress: handleReset },
+      ]);
+      return
     }
+    onSendNumber(chosenNumber)
+  };
 
-    const handleConfirm = () => {
-      
-    }
+  const handleNumber = (number) => {
+    setEnteredNumber(number);
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Sayı Tahmin Uygulaması</Text>
+      <Title title="Sayı Tahmin Uygulaması" />
       <View style={styles.card}>
-        <TextInput style={styles.input} keyboardType='number-pad' maxLength={2} />
+        <TextInput
+          style={styles.input}
+          keyboardType="number-pad"
+          maxLength={2}
+          onChangeText={handleNumber}
+          value={enteredNumber}
+        />
         <View style={styles.buttonsContainer}>
-            <View style={styles.buttonContainer}>
-                <CustomButton title="Temizle" onPress={handleReset} />
-            </View>
-            <View style={styles.buttonContainer}>
-                <CustomButton title="Onayla" onPress={handleConfirm} />
-            </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton title="Temizle" onPress={handleReset} />
+          </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton title="Onayla" onPress={handleConfirm} />
+          </View>
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20
-    },
-    card: {
-        backgroundColor: "orange",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
-        marginTop: 20,
-        borderRadius: 20,
-        elevation: 4,
-        shadowColor: "black",
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 6,
-        shadowOpacity: 0.25
-    },
-    input: {
-        borderBottomWidth: 2,
-        borderBottomColor: "yellow",
-        width: 50,
-        height: 50,
-        marginVertical: 10,
-        fontSize: 35,
-        fontWeight: "bold",
-    },
-    buttonsContainer: {
-        flexDirection: "row"
-    },
-    buttonContainer: {
-        flex: 1
-    }
-})
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  card: {
+    backgroundColor: "orange",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    marginTop: 20,
+    borderRadius: 20,
+    elevation: 4,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.25,
+  },
+  input: {
+    borderBottomWidth: 2,
+    borderBottomColor: "yellow",
+    width: 50,
+    height: 50,
+    marginVertical: 10,
+    fontSize: 35,
+    fontWeight: "bold",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+  },
+  buttonContainer: {
+    flex: 1,
+  },
+});
