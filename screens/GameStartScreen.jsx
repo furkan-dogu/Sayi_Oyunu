@@ -3,17 +3,26 @@ import React from 'react'
 import CustomButton from '../components/CustomButton'
 
 export default function GameStartScreen() {
+
+    const handleReset = () => {
+      
+    }
+
+    const handleConfirm = () => {
+      
+    }
+
   return (
     <View style={styles.container}>
       <Text>Sayı Tahmin Uygulaması</Text>
       <View style={styles.card}>
-        <TextInput style={styles.input} keyboardType='number-pad' />
+        <TextInput style={styles.input} keyboardType='number-pad' maxLength={2} />
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonContainer}>
-                <CustomButton title="Temizle" />
+                <CustomButton title="Temizle" onPress={handleReset} />
             </View>
-            <View style={styles.buttonsContainer}>
-                <CustomButton title="Onayla" />
+            <View style={styles.buttonContainer}>
+                <CustomButton title="Onayla" onPress={handleConfirm} />
             </View>
         </View>
       </View>
