@@ -1,51 +1,61 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
-import { useEffect, useState } from 'react'
-import Title from '../components/Title'
-import ComputerNumber from "../components/ComputerNumber"
-import CustomButton from '../components/CustomButton'
-import { AntDesign } from '@expo/vector-icons';
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import Title from "../components/Title";
+import ComputerNumber from "../components/ComputerNumber";
+import CustomButton from "../components/CustomButton";
+import { AntDesign } from "@expo/vector-icons";
 
-let minNumber = 1
-let maxNumber = 100
+let minNumber = 1;
+let maxNumber = 100;
 
 export default function GameScreen({ userNumber, onGameOver }) {
-
-  const initialGuess = generateNumber(1, 100, userNumber)
-  const [currentGuess, setCurrentGuess] = useState(initialGuess)
+  const initialGuess = generateNumber(1, 100, userNumber);
+  const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [guessCounts, setGuessCounts] = useState([initialGuess]);
 
   useEffect(() => {
-    if(currentGuess === userNumber) {7
-      onGameOver()
+    if (currentGuess === userNumber) {
+      7;
+      onGameOver(guessCounts.length);
     }
-  }, [currentGuess, userNumber, onGameOver])
-  
+  }, [currentGuess, userNumber, onGameOver]);
+
+  useEffect(() => {
+    minNumber = 1;
+    maxNumber = 100;
+  }, []);
 
   function generateNumber(min, max, exclude) {
-    const randomNumber = Math.floor(Math.random() * (max - min)) + min
+    const randomNumber = Math.floor(Math.random() * (max - min)) + min;
 
-    if(randomNumber === exclude) {
-      return generateNumber(min, max, exclude)
+    if (randomNumber === exclude) {
+      return generateNumber(min, max, exclude);
     } else {
-      return randomNumber
+      return randomNumber;
     }
   }
 
   const handleNextGuess = (direction) => {
-
-    if((direction === "lower" && currentGuess < userNumber) || (direction === "upper" && currentGuess > userNumber)) {
-      Alert.alert("Hatalı İşlem!", "Lütfen hatalı işlem yapmaya çalışmayın.", [{text: "Tamam", style: "cancel"}])
-      return
+    if (
+      (direction === "lower" && currentGuess < userNumber) ||
+      (direction === "upper" && currentGuess > userNumber)
+    ) {
+      Alert.alert("Hatalı İşlem!", "Lütfen hatalı işlem yapmaya çalışmayın.", [
+        { text: "Tamam", style: "cancel" },
+      ]);
+      return;
     }
 
-    if(direction === "lower") {
-      maxNumber = currentGuess
+    if (direction === "lower") {
+      maxNumber = currentGuess;
     } else {
-      minNumber = currentGuess + 1
+      minNumber = currentGuess + 1;
     }
 
-    const newRandomNumber = generateNumber(minNumber, maxNumber, currentGuess)
-    setCurrentGuess(newRandomNumber)
-  }
+    const newRandomNumber = generateNumber(minNumber, maxNumber, currentGuess);
+    setCurrentGuess(newRandomNumber);
+    setGuessCounts((prevGuess) => [newRandomNumber, ...prevGuess]);
+  };
 
   return (
     <View style={styles.container}>
@@ -54,18 +64,24 @@ export default function GameScreen({ userNumber, onGameOver }) {
       <View style={styles.card}>
         <Text style={styles.title}>Altında mı üstünde mi?</Text>
         <View style={styles.buttonsContainer}>
-          <CustomButton title={<AntDesign name="minus" size={24} color="white" />} onPress={handleNextGuess.bind(this, "lower")} />
-          <CustomButton title={<AntDesign name="plus" size={24} color="white" />} onPress={handleNextGuess.bind(this, "upper")} />
+          <CustomButton
+            title={<AntDesign name="minus" size={24} color="white" />}
+            onPress={handleNextGuess.bind(this, "lower")}
+          />
+          <CustomButton
+            title={<AntDesign name="plus" size={24} color="white" />}
+            onPress={handleNextGuess.bind(this, "upper")}
+          />
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 30
+    padding: 30,
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -87,6 +103,6 @@ const styles = StyleSheet.create({
   title: {
     color: "white",
     fontSize: 24,
-    marginBottom: 15
-  }
-})
+    marginBottom: 15,
+  },
+});
