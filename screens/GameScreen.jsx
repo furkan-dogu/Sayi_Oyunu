@@ -1,16 +1,27 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { useState } from 'react'
+import { Alert, StyleSheet, Text, View } from 'react-native'
+import { useEffect, useState } from 'react'
 import Title from '../components/Title'
 import ComputerNumber from "../components/ComputerNumber"
+import CustomButton from '../components/CustomButton'
+import { AntDesign } from '@expo/vector-icons';
 
-export default function GameScreen({ userNumber }) {
+let minNumber = 1
+let maxNumber = 100
+
+export default function GameScreen({ userNumber, onGameOver }) {
 
   const initialGuess = generateNumber(1, 100, userNumber)
-  
   const [currentGuess, setCurrentGuess] = useState(initialGuess)
 
+  useEffect(() => {
+    if(currentGuess === userNumber) {7
+      onGameOver()
+    }
+  }, [currentGuess, userNumber, onGameOver])
+  
+
   function generateNumber(min, max, exclude) {
-    let randomNumber = Math.floor(Math.random() * (max - min)) + min
+    const randomNumber = Math.floor(Math.random() * (max - min)) + min
 
     if(randomNumber === exclude) {
       return generateNumber(min, max, exclude)
@@ -19,12 +30,33 @@ export default function GameScreen({ userNumber }) {
     }
   }
 
+  const handleNextGuess = (direction) => {
+
+    if((direction === "lower" && currentGuess < userNumber) || (direction === "upper" && currentGuess > userNumber)) {
+      Alert.alert("Hatalı İşlem!", "Lütfen hatalı işlem yapmaya çalışmayın.", [{text: "Tamam", style: "cancel"}])
+      return
+    }
+
+    if(direction === "lower") {
+      maxNumber = currentGuess
+    } else {
+      minNumber = currentGuess + 1
+    }
+
+    const newRandomNumber = generateNumber(minNumber, maxNumber, currentGuess)
+    setCurrentGuess(newRandomNumber)
+  }
+
   return (
     <View style={styles.container}>
       <Title title="Bilgisayar Tahmini" />
       <ComputerNumber>{currentGuess}</ComputerNumber>
-      <View>
-        <Text>Altında mı üstünde mi?</Text>
+      <View style={styles.card}>
+        <Text style={styles.title}>Altında mı üstünde mi?</Text>
+        <View style={styles.buttonsContainer}>
+          <CustomButton title={<AntDesign name="minus" size={24} color="white" />} onPress={handleNextGuess.bind(this, "lower")} />
+          <CustomButton title={<AntDesign name="plus" size={24} color="white" />} onPress={handleNextGuess.bind(this, "upper")} />
+        </View>
       </View>
     </View>
   )
@@ -34,5 +66,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 25,
+  },
+  card: {
+    backgroundColor: "orange",
+    padding: 16,
+    marginTop: 20,
+    elevation: 4,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.25,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    color: "white",
+    fontSize: 24,
+    marginBottom: 15
   }
 })
